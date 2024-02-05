@@ -68,7 +68,7 @@ std::string ObjectLogin = R"({
 
 // Array
 std::string ArrayLogin = R"({
-    [
+    "test": [
         {
             "userid": "114514",
             "password": "password"
@@ -76,7 +76,46 @@ std::string ArrayLogin = R"({
         {
             "userid": "222pp",
             "password": "rootadmin"
-        },
-    ],
+        }
+    ]
 })";
 
+
+// write 
+// Number
+std::string ageString = R"({
+    "intage": 33
+})";
+
+std::string floatageString = R"({
+    "floatage": 33.34
+})";
+
+std::string doubleageString = R"({
+    "doubleage": 33.234324324
+})";
+
+std::string stringageString = R"({
+    "stringage": "3334"
+})";
+
+std::string stringObject_22 = R"({
+    "Object": {
+        "a": 1,
+        "b": 2,
+        "c": 3
+    }
+})";
+
+std::string stringArray_33= R"({
+    "Object": {
+        "a": 1,
+        "b": 2,
+        "c": 3
+        "Object22": [
+            "e": 1,
+            "f": 2
+        ]
+    }
+
+})";

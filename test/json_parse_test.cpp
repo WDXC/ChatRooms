@@ -3,7 +3,12 @@
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
 #include "json_struct_def.h"
+#include "rapidjson/document.h"
+#include "rapidjson/prettywriter.h"
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/stringbuffer.h"
 #include "struct_def.h"
+#include <cmath>
 #include <iostream>
 #include <memory>
 #include <string>
@@ -15,7 +20,8 @@ class EncapsluateJsonTest : public Test {
 public:
   std::shared_ptr<EncapsluateJson> root;
   void SetUp() {
-    root = std::make_shared<EncapsluateJson>(IntegerJson.c_str());
+    root = std::make_shared<EncapsluateJson>();
+    root->InitRead(IntegerJson.c_str());
   }
   void TearDown() { root.reset(); }
 };
@@ -33,7 +39,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
   EXPECT_EQ(negativeInteger, -17);
   EXPECT_EQ(zero, 0);
 
-  root.reset(new EncapsluateJson(floatJson.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(floatJson.c_str());
   float positiveFloat = 0.0;
   float negativeFloat = 0.0;
   float scientificNotation = 0.0;
@@ -44,7 +51,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
   EXPECT_FLOAT_EQ(negativeFloat, -0.01);
   EXPECT_FLOAT_EQ(scientificNotation, 2.5e6);
 
-  root.reset(new EncapsluateJson(MaxInt32ValueJson.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(MaxInt32ValueJson.c_str());
   int32_t int32MaxValue = 0;
   int32_t int32MinValue = 0;
   root->parse("maxValue", int32MaxValue);
@@ -52,7 +60,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
   EXPECT_EQ(int32MaxValue, 2147483647);
   EXPECT_EQ(int32MinValue, -2147483648);
 
-  root.reset(new EncapsluateJson(MaxUint32ValueJson.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(MaxUint32ValueJson.c_str());
   uint32_t uint32MaxValue = 0;
   uint32_t uint32MinValue = 0;
   root->parse("maxValue", uint32MaxValue);
@@ -60,7 +69,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
   EXPECT_EQ(uint32MaxValue, 4294967295);
   EXPECT_EQ(uint32MinValue, 0);
 
-  root.reset(new EncapsluateJson(MaxDoubleVaueJson.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(MaxDoubleVaueJson.c_str());
   double maxDoubleValue = 0.0;
   double minDoubleValue = 0.0;
   root->parse("maxValue", maxDoubleValue);
@@ -68,7 +78,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
   EXPECT_DOUBLE_EQ(maxDoubleValue, 1.7976931348623157e+308);
   EXPECT_DOUBLE_EQ(minDoubleValue, -1.7976931348623157e+308);
 
-  root.reset(new EncapsluateJson(SpecialValueJson.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(SpecialValueJson.c_str());
   int32_t notANumber = 0;
   int32_t infinity = 0;
   root->parse("notANumber", notANumber);
@@ -76,7 +87,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
   EXPECT_EQ(notANumber, -1);
   EXPECT_EQ(infinity, -1);
 
-  root.reset(new EncapsluateJson(DecimalValueJson.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(DecimalValueJson.c_str());
   float decimalPoint1 = 0.0;
   float decimalPoint2 = 0.0;
   root->parse("decimalPoint1", decimalPoint1);
@@ -87,7 +99,8 @@ TEST_F(EncapsluateJsonTest, ParseJson_Number_Test) {
 
 // generate json
 TEST_F(EncapsluateJsonTest, Parse_String_Test) {
-  root.reset(new EncapsluateJson(basicCharacter.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(basicCharacter.c_str());
   std::string stringWithAlphabets = "";
   root->parse("stringWithAlphabets", stringWithAlphabets);
   EXPECT_STREQ(stringWithAlphabets.c_str(), "HelloWorld");
@@ -102,7 +115,8 @@ TEST_F(EncapsluateJsonTest, Parse_String_Test) {
   EXPECT_STREQ(stringWithSpaces.c_str(), "   This is a string with spaces   ");
   EXPECT_STREQ(stringWithSpecialChars.c_str(), "!@#$%^&*()_+");
 
-  root.reset(new EncapsluateJson(EscapeCharacter.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(EscapeCharacter.c_str());
   std::string escapedDoubleQuote = "";
   std::string escapedBackslash = "";
   std::string newLineAndTab = "";
@@ -116,17 +130,20 @@ TEST_F(EncapsluateJsonTest, Parse_String_Test) {
   EXPECT_STREQ(newLineAndTab.c_str(),
                "This is a string with new line and tab:\n\tNew Line\tTab");
 
-  root.reset(new EncapsluateJson(UnicodeCharacter.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(UnicodeCharacter.c_str());
   std::string unicodeString = "";
   root->parse("unicodeString", unicodeString);
   EXPECT_STREQ(unicodeString.c_str(), "This is a Unicode string: \u4F60\u597D");
 
-  root.reset(new EncapsluateJson(SpecialCharacter.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(SpecialCharacter.c_str());
   std::string stringWithBackspace = "";
   root->parse("stringWithSpaces", stringWithBackspace);
   EXPECT_STREQ(stringWithBackspace.c_str(), "");
 
-  root.reset(new EncapsluateJson(EmptyCharacter.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(EmptyCharacter.c_str());
   std::string emptyString = "";
   std::string stringWithEmptyQuotes = "";
   root->parse("emptyString", emptyString);
@@ -134,7 +151,8 @@ TEST_F(EncapsluateJsonTest, Parse_String_Test) {
   EXPECT_STREQ(emptyString.c_str(), "");
   EXPECT_STREQ(stringWithEmptyQuotes.c_str(), "");
 
-  root.reset(new EncapsluateJson(longSentenceCharacter.c_str()));
+  root.reset(new EncapsluateJson());
+  root->InitRead(longSentenceCharacter.c_str());
   std::string longstring = "";
   root->parse("longstring", longstring);
   EXPECT_STREQ(longstring.c_str(), longString);
@@ -146,7 +164,8 @@ void CheckLoginStructs(const Login& actual, const Login & res){
 }
 
 TEST_F(EncapsluateJsonTest, Parse_Struct_Test) {
-    root.reset(new EncapsluateJson(ObjectLogin.c_str()));
+    root.reset(new EncapsluateJson());
+    root->InitRead(ObjectLogin.c_str());
     Login login;
     root->parse_Login("test", login);
     CheckLoginStructs(login, Login("114514", "password"));
@@ -164,11 +183,82 @@ void CheckVectorLoginStructs(const std::vector<Login>& actual, const std::vector
 }
 
 TEST_F(EncapsluateJsonTest, Parse_Array_Test) {
-    root.reset(new EncapsluateJson(ArrayLogin.c_str()));
+    root.reset(new EncapsluateJson());
+    root->InitRead(ArrayLogin.c_str());
     std::vector<Login> rv;
     root->parse_Login_array("test", rv);
     CheckVectorLoginStructs(rv, {{"114514", "password"}, {"222pp", "rootadmin"}});
 }
+
+TEST_F(EncapsluateJsonTest, Write_CommonType_Test) {
+    std::string tmp;
+    root.reset(new EncapsluateJson());
+    root->InitWriter();
+    int32_t age = 33;
+    root->writeJson("intage", age);
+    tmp = root->GetResultCharacters();
+    root->InitRead(tmp.c_str());
+    int32_t intage;
+    root->parse("intage", intage);
+    EXPECT_EQ(intage, age);
+
+
+    root.reset(new EncapsluateJson());
+    root->InitWriter();
+    float floatage = 33.34;
+    root->writeJson("floatage",floatage);
+    tmp = root->GetResultCharacters();
+    root->InitRead(tmp.c_str());
+    float floatage_1;
+    root->parse("floatage", floatage_1);
+    EXPECT_FLOAT_EQ(floatage, floatage_1);
+
+    root.reset(new EncapsluateJson());
+    root->InitWriter();
+    double doubleage = 33.234324324;
+    root->writeJson("doubleage", doubleage);
+    EXPECT_STREQ(root->GetResultCharacters().c_str(), doubleageString.c_str());
+    tmp = root->GetResultCharacters();
+    root->InitRead(tmp.c_str());
+    double doubleage_1;
+    root->parse("doubleage", doubleage_1);
+    EXPECT_DOUBLE_EQ(doubleage, doubleage_1);
+
+
+    root.reset(new EncapsluateJson());
+    root->InitWriter();
+    std::string stringage = "3334";
+    root->writeJson("stringage", stringage);
+    EXPECT_STREQ(root->GetResultCharacters().c_str(), stringageString.c_str());
+    tmp = root->GetResultCharacters();
+    EXPECT_STREQ(tmp.c_str(), stringageString.c_str());
+
+}
+
+TEST_F(EncapsluateJsonTest, Write_Object_Array_Test) {
+    root.reset(new EncapsluateJson());
+    root->InitWriter();
+    rapidjson::Value object(rapidjson::kObjectType);
+    root->Append("a", 1, object);
+    root->Append("b", 2, object);
+    root->Append("c", 3, object);
+    root->writeObject("Object", object);
+    EXPECT_STREQ(root->GetResultCharacters().c_str(), stringObject_22.c_str());
+
+    root.reset(new EncapsluateJson());
+    root->InitWriter();
+    rapidjson::Value object_fir(rapidjson::kObjectType);
+    root->Append("a", 1, object_fir);
+    root->Append("b", 2, object_fir);
+    root->Append("c", 3, object_fir);
+    rapidjson::Value object_array(rapidjson::kArrayType);
+    root->Append("e", 1, object_array);
+    root->Append("f", 2, object_array);
+    root->writeObject("Object22", object_array);
+
+    EXPECT_STREQ(root->GetResultCharacters().c_str(), stringArray_33.c_str());
+}
+
 
 // error handle
 
