@@ -42,7 +42,8 @@ find_library(LIBEVENT_LIBRARIES
 )
 
 include_directories(${CMAKE_PROJECT_NAME} PUBLIC 
-    include
+    ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/include/json
     ${Spdlog}/include
     ${GoogleTest}/googletest/include
     ${GoogleTest}/googlemock/include
