@@ -108,14 +108,11 @@ std::string stringObject_22 = R"({
 })";
 
 std::string stringArray_33= R"({
-    "Object": {
-        "a": 1,
-        "b": 2,
-        "c": 3
-        "Object22": [
-            "e": 1,
-            "f": 2
-        ]
-    }
-
+    "Object22": [
+        {
+            "a": 1,
+            "b": 2,
+            "c": 3
+        }
+    ]
 })";

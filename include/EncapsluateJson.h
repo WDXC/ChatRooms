@@ -13,16 +13,6 @@
 #include <vector>
 
 using namespace rapidjson;
-enum ValueType {
-  UnknownType = 0,
-  Int32Type,
-  Int64Type,
-  Uint32Type,
-  Uint64Type,
-  FloatType,
-  DoubleType,
-  StringType,
-};
 
 class EncapsluateJson {
 public:
@@ -59,17 +49,25 @@ public:
   void writeJson(const char *, const double &);
   void writeJson(const char *, const std::string &);
 
-  void Append(const char *, const int32_t, Value &);
-  void Append(const char *, const int64_t, Value &);
-  void Append(const char *, const uint32_t, Value &);
-  void Append(const char *, const uint64_t, Value &);
-  void Append(const char *, const float, Value &);
-  void Append(const char *, const double, Value &);
-  void Append(const char *, const std::string &, Value &);
+  void AppendToObject(const char *, const int32_t, Value &);
+  void AppendToObject(const char *, const int64_t, Value &);
+  void AppendToObject(const char *, const uint32_t, Value &);
+  void AppendToObject(const char *, const uint64_t, Value &);
+  void AppendToObject(const char *, const float, Value &);
+  void AppendToObject(const char *, const double, Value &);
+  void AppendToObject(const char *, const std::string &, Value &);
+
+  void AppendToArray(const int32_t, Value& );
+  void AppendToArray(const int64_t, Value& );
+  void AppendToArray(const uint32_t, Value& );
+  void AppendToArray(const uint64_t, Value& );
+  void AppendToArray(const float, Value& );
+  void AppendToArray(const double, Value& );
+  void AppendToArray(const std::string, Value& );
+  void AppendToArray(Value&, Value&);
 
   // write object
   void writeObject(const char *, Value &);
-  void writeObject(Value&, Value&);
 
 public:
   std::string GetResultCharacters();

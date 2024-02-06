@@ -239,21 +239,20 @@ TEST_F(EncapsluateJsonTest, Write_Object_Array_Test) {
     root.reset(new EncapsluateJson());
     root->InitWriter();
     rapidjson::Value object(rapidjson::kObjectType);
-    root->Append("a", 1, object);
-    root->Append("b", 2, object);
-    root->Append("c", 3, object);
+    root->AppendToObject("a", 1, object);
+    root->AppendToObject("b", 2, object);
+    root->AppendToObject("c", 3, object);
     root->writeObject("Object", object);
     EXPECT_STREQ(root->GetResultCharacters().c_str(), stringObject_22.c_str());
 
     root.reset(new EncapsluateJson());
     root->InitWriter();
     rapidjson::Value object_fir(rapidjson::kObjectType);
-    root->Append("a", 1, object_fir);
-    root->Append("b", 2, object_fir);
-    root->Append("c", 3, object_fir);
     rapidjson::Value object_array(rapidjson::kArrayType);
-    root->Append("e", 1, object_array);
-    root->Append("f", 2, object_array);
+    root->AppendToObject("a", 1, object_fir);
+    root->AppendToObject("b", 2, object_fir);
+    root->AppendToObject("c", 3, object_fir);
+    root->AppendToArray(object_fir, object_array);
     root->writeObject("Object22", object_array);
 
     EXPECT_STREQ(root->GetResultCharacters().c_str(), stringArray_33.c_str());
