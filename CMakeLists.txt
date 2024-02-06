@@ -55,8 +55,6 @@ include_directories(${CMAKE_PROJECT_NAME} PUBLIC
 aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCES)
 
 
-# 添加可执行文件
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES})
 
 add_executable(${CMAKE_PROJECT_NAME}_TEST
     ${CMAKE_SOURCE_DIR}/test/json_parse_test.cpp)
