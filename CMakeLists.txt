@@ -19,6 +19,7 @@ SET(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 SET(GoogleTest  ${CMAKE_CURRENT_SOURCE_DIR}/third_party/googletest)
@@ -53,12 +54,16 @@ include_directories(${CMAKE_PROJECT_NAME} PUBLIC
 )
 
 # 添加源文件
-aux_source_directory(${PROJECT_SOURCE_DIR}/src SOURCES)
+file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
+add_executable(${CMAKE_PROJECT_NAME}_Json_TEST
+    ${PROJECT_SOURCE_DIR}/test/json_parse_test.cpp)
 
+add_executable(${CMAKE_PROJECT_NAME}_HttpConnectTest
+    ${PROJECT_SOURCE_DIR}/test/HttpConnectTest.cpp)
 
-add_executable(${CMAKE_PROJECT_NAME}_TEST
-    ${CMAKE_SOURCE_DIR}/test/json_parse_test.cpp)
+add_executable(${CMAKE_PROJECT_NAME}_HttpParseTest
+    ${PROJECT_SOURCE_DIR}/test/HttpParseTest.cpp)
 
 add_library(${CMAKE_PROJECT_NAME}_lib ${SOURCES})
 
@@ -74,7 +79,23 @@ target_link_libraries(${CMAKE_PROJECT_NAME}_lib
     pcap 
 )
 
-target_link_libraries(${CMAKE_PROJECT_NAME}_TEST 
+target_link_libraries(${CMAKE_PROJECT_NAME}_Json_TEST 
+    ${CMAKE_PROJECT_NAME}_lib
+    gtest
+    gmock
+    gtest_main
+    gmock_main
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME}_HttpConnectTest
+    ${CMAKE_PROJECT_NAME}_lib
+    gtest
+    gmock
+    gtest_main
+    gmock_main
+)
+
+target_link_libraries(${CMAKE_PROJECT_NAME}_HttpParseTest
     ${CMAKE_PROJECT_NAME}_lib
     gtest
     gmock
